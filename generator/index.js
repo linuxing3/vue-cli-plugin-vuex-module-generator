@@ -2,6 +2,13 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports = (api, options, rootOptions) => {
+  
+  api.extendPackage({
+    "dependencies": {
+      "nedb": ""
+    } 
+  })
+  
   const { moduleName, storeRootDir } = options
   const templatesRoot = './templates'
   
