@@ -4,45 +4,66 @@ const path = require('path')
 module.exports = (api, options, rootOptions) => {
   const { moduleName, storeRootDir } = options
   const templatesRoot = './templates'
+  
   const moduleDirPath = path.join(storeRootDir, moduleName)
   const storeRootPath = path.join(storeRootDir, 'index.js')
+  // api dir
+  const apiPath = path.join(storeRootDir, "api")
 
-  // Abort if module already exists
+
+  // 如果模块已存在，直接退出Abort if module already exists
   if (fs.existsSync(moduleDirPath)) {
     console.warn(`Module ${moduleName} exists`)
     return
   }
-
+  
+  // 所有文件
   const files = {}
 
-  // Store root
+  // 存储器根目录 Store root directory
   if (!fs.existsSync(storeRootPath)) {
     files[storeRootPath] = `${templatesRoot}/index.js`
   }
 
-  // Modules templates
+  // 存储器模块的模板文件 Modules templates
   ['index', 'actions', 'mutations', 'getters'].forEach(template => {
     const fileName = `${template}.js`
     const filePath = path.join(moduleDirPath, fileName)
     files[filePath] = `${templatesRoot}/module/${fileName}`
   })
+  
+  // 帮助函数文件 Store helper templates
+  ['utils', 'types'].forEach(template => {
+    const fileName = `${template}.js`
+    const filePath = path.join(templatesRoot, fileName)
+    files[filePath] = `${templatesRoot}/${fileName}`
+  })
+  
+  // api文件 Api templates
+  ['index', 'nedb'].forEach(template => {
+    const fileName = `${template}.js`
+    const filePath = path.join(apiPath, fileName)
+    files[filePath] = `${apiPath}/${fileName}`
+  })
+  
+  // 在api中调用模块文件并进行后期处理
 
   api.render(files)
 
   api.postProcessFiles(files => {
-    // Edit store's root module
+    // 编辑根模块，添加模块 Edit store's root module
     const storeRoot = files[storeRootPath]
 
     if (storeRoot) {
       const lines = storeRoot.split(/\r?\n/g).reverse()
 
-      // Add import line
+      // 按模块名称，添加引用 Add import line
       const lastImportIndex = lines.findIndex(line => line.match(/^import/))
       if (lastImportIndex !== -1) {
         lines[lastImportIndex] += `\nimport ${moduleName} from './${moduleName}'`
       }
 
-      // Add module line
+      // 添加模块行Add module line
       lines.reverse()
       const modulesStartIndex = lines.findIndex(line => line.match(/modules: *{/))
       if (modulesStartIndex !== -1) {
