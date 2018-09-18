@@ -1,17 +1,17 @@
 {
   "name": "vue-cli-plugin-vuex-module-generator",
-  "description": "Vuex store module generator plugin for vue-cli 3",
+  "description": "Vuex store module generator plugin with base model and extension for vue-cli 3",
   "version": "0.1.1",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/paulgv/vue-cli-plugin-vuex-module-generator.git"
+    "url": "git+https://github.com/linuxing3/vue-cli-plugin-vuex-module-generator.git"
   },
   "bugs": {
-    "url": "https://github.com/paulgv/vue-cli-plugin-vuex-module-generator/issues"
+    "url": "https://github.com/linuxing3/vue-cli-plugin-vuex-module-generator/issues"
   },
-  "homepage": "https://github.com/paulgv/vue-cli-plugin-vuex-module-generator#readme",
-  "author": "Paul Gascou-Vaillancourt <paul@paulgv.com>",
+  "homepage": "https://github.com/linuxing3/vue-cli-plugin-vuex-module-generator#readme",
+  "author": "Xing Wenju <xingwenju@gmail.com>",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
