@@ -2,13 +2,18 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports = (api, options, rootOptions) => {
-  
+  // 安装依赖包
   api.extendPackage({
     "dependencies": {
-      "nedb": ""
-    } 
+      "nedb": "^1.8.0",
+      "nedb-promise": "^2.0.1"
+    },
+    "devDependencies": {
+      "@types/nedb": "^1.8.5"
+    }
   })
   
+  // 拷贝模板
   const { moduleName, storeRootDir } = options
   const templatesRoot = './templates'
   
