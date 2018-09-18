@@ -1,4 +1,4 @@
-import { dbOpen } from "@/store/api/nedb"; 
+import { dbOpen } from "@/store/api"; 
 import types from "@/store/types";
 
 export default {
