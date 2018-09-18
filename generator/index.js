@@ -19,8 +19,6 @@ module.exports = (api, options, rootOptions) => {
 
   const moduleDirPath = path.join(storeRootDir, moduleName);
   const storeRootPath = path.join(storeRootDir, "index.js");
-  // api dir
-  const apiPath = path.join(storeRootDir, "api");
 
   // 如果模块已存在，直接退出Abort if module already exists
   if (fs.existsSync(moduleDirPath)) {
@@ -49,7 +47,7 @@ module.exports = (api, options, rootOptions) => {
       ("utils", "types")
     ].forEach(template => {
       const fileName = `${template}.js`;
-      const filePath = path.join(templatesRoot, fileName);
+      const filePath = path.join(storeRootPath, fileName);
       files[filePath] = `${templatesRoot}/${fileName}`;
     })
 
@@ -58,8 +56,8 @@ module.exports = (api, options, rootOptions) => {
       ("index", "nedb")
     ].forEach(template => {
       const fileName = `${template}.js`;
-      const filePath = path.join(apiPath, fileName);
-      files[filePath] = `${apiPath}/${fileName}`;
+      const filePath = path.join(moduleDirPath, fileName);
+      files[filePath] = `${templatesRoot}/api/${fileName}`;
     });
 
   // 在api中调用模块文件并进行后期处理
