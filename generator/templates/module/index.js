@@ -3,6 +3,11 @@ import actions from './actions'
 import mutations from './mutations'
 
 const state = () => ({
+  name: '',
+  items: [],
+  currentItem: {},
+  filterKey: '',
+  sortKey: ''
 })
 
 export default {
