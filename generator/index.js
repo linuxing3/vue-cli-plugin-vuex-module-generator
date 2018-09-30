@@ -20,7 +20,7 @@ module.exports = (api, options, rootOptions) => {
     moduleName,
     storeRootDir,
     routerRootDir,
-    componentsRootDir,
+    componentRootDir,
   } = options;
   const templatesRoot = "./templates";
 
@@ -59,6 +59,8 @@ module.exports = (api, options, rootOptions) => {
     files[
       moduleDirIndexPath
     ] = `${templatesRoot}/store/modules/module.ts`;
+  } else {
+    console.warn("Store Module Index file exists");
   }
 
   // 存储器模块的模板文件 Modules templates
@@ -75,25 +77,25 @@ module.exports = (api, options, rootOptions) => {
       files[filePath] = `${templatesRoot}/store/modules/Base/${fileName}`;
     });
   } else {
-    console.warn(`Module ${moduleBaseDir} exists`);
+    console.warn(`Store Module ${moduleBaseDir} exists`);
   }
 
   // Components
   // 如果组件已存在，直接退出
   // @/components/activity
-  const componentsDirPath = path.join(componentsRootDir, moduleName);
+  const componentsDirPath = path.join(componentRootDir, moduleName);
   console.warn(`Checking Components Dir Path ${componentsDirPath} ...`);
   if (!fs.existsSync(componentsDirPath)) {
     ["Table", "Info"].forEach(template => {
       // Table.ts
-      let fileName = `${template}.ts`;
+      let fileName = `${template}.vue`;
       // @/components/activity/Table.ts
       let filePath = path.join(componentsDirPath, fileName);
       console.log("Components files generated in " + filePath);
       files[filePath] = `${templatesRoot}/components/module/${fileName}`;
     });
   } else {
-    console.warn(`Module ${componentsDirPath} exists`);
+    console.warn(`Components Module ${componentsDirPath} exists`);
   }
 
   // 在api中调用模块文件并进行后期处理
