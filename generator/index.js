@@ -6,34 +6,44 @@ module.exports = (api, options, rootOptions) => {
   api.extendPackage({
     dependencies: {
       nedb: "^1.8.0",
-      "nedb-promise": "^2.0.1"
+      "nedb-promise": "^2.0.1",
     },
     devDependencies: {
-      "@types/nedb": "^1.8.5"
-    }
+      "@types/nedb": "^1.8.5",
+    },
   });
 
   // 所有文件
   const files = {};
   // 拷贝模板
-  const { moduleName, storeRootDir, routerRootDir, componentsRootDir } = options;
+  const {
+    moduleName,
+    storeRootDir,
+    routerRootDir,
+    componentsRootDir,
+  } = options;
   const templatesRoot = "./templates";
 
   // 根目录 Store root directory
   // @/store/index.ts
   const storeRootIndexPath = path.join(storeRootDir, "index.ts");
+  console.log("storeRootIndexPath is: " + storeRootIndexPath);
+  console.log('--------------------------------------------------------')
   if (!fs.existsSync(storeRootIndexPath)) {
     files[storeRootIndexPath] = `${templatesRoot}/store/index.ts`;
   }
 
- // store model
+  // store model
   const storeModelPath = path.join(storeRootDir, "Model/BaseModel.ts");
+  console.log("storeModelPath is: " + storeModelPath);
+  console.log('--------------------------------------------------------')
   if (!fs.existsSync(storeModelPath)) {
     files[storeModelPath] = `${templatesRoot}/store/Model/BaseModel.ts`;
   }
 
- // store api
+  // store api
   const storeApiPath = path.join(storeRootDir, "api/NedbSDK.ts");
+  console.log("storeApiPath is:" + storeApiPath);
   if (!fs.existsSync(storeApiPath)) {
     files[storeApiPath] = `${templatesRoot}/store/api/NedbSDK.ts`;
   }
@@ -42,57 +52,58 @@ module.exports = (api, options, rootOptions) => {
   // 如果模块已存在，直接退出
   // @/store/modules/activity.ts
   const moduleDirPath = path.join(storeRootDir, "modules");
-  const moduleDirIndexPath = `${moduleDirPath}/${moduleName}.ts`;
-  if (!fs.existsSync(moduleDirPath)) {
+  const moduleDirIndexPath = path.join(moduleDirPath, moduleName);
+  console.log("moduleDirIndexPath is:" + moduleDirIndexPath);
+  if (!fs.existsSync(moduleDirIndexPath)) {
     // @/store/modules/activity.ts
-    files[moduleDirIndexPath] = `${templatesRoot}/store/modules/${moduleName}.ts`;
-  } else {
-    console.warn(`Module ${moduleDirIndexPath} exists`);
-    return;
+    files[
+      moduleDirIndexPath
+    ] = `${templatesRoot}/store/modules/${moduleName}.ts`;
   }
+
   // 存储器模块的模板文件 Modules templates
   // @store/modules/Base/index.ts ...
-  if (!fs.existsSync(moduleDirPath, "Base")) {
-    ["index", "actions", "mutations", "getters"]
-      .forEach(template => {
-        let fileName = `${template}.ts`;
-        let filePath = path.join(moduleDirPath, "Base", fileName);
-        console.log(filePath);
-        // @/store/modules/Base/index
-        files[filePath] = `${templatesRoot}/store/modules/Base/${fileName}`;
-      })
+  console.warn(`Checking Module Dir Path ${moduleDirPath}/Base ...`);
+  console.log('--------------------------------------------------------')
+  if (!fs.existsSync(path.join(moduleDirPath, "Base"))) {
+    ["index", "actions", "mutations", "getters"].forEach(template => {
+      let fileName = `${template}.ts`;
+      let filePath = path.join(moduleDirPath, "Base", fileName);
+      console.log("module files generated in " + filePath);
+      // @/store/modules/Base/index
+      files[filePath] = `${templatesRoot}/store/modules/Base/${fileName}`;
+    });
   } else {
     console.warn(`Module ${moduleDirPath}/Base exists`);
     return;
   }
 
-
-// Components
+  // Components
   // 如果组件已存在，直接退出
   // @/components/activity
   const componentsDirPath = path.join(componentsRootDir, moduleName);
-  if (fs.existsSync(componentsDirPath)) {
-    return;
+  console.warn(`Checking Components Dir Path ${componentsDirPath} ...`);
+  if (!fs.existsSync(componentsDirPath)) {
+    ["Table", "Info"].forEach(template => {
+      // Table.ts
+      let fileName = `${template}.ts`;
+      // @/components/activity/Table.ts
+      let filePath = path.join(componentsDirPath, fileName);
+      console.log("Components files generated in " + filePath);
+      files[filePath] = `${templatesRoot}/components/module/${fileName}`;
+    });
   } else {
-    ["Table", "Info" ]
-      .forEach(template => {
-        // Table.ts
-        let fileName = `${template}.ts`;
-        // @/components/activity/Table.ts
-        let filePath = path.join(componentsDirPath, fileName);
-        console.log(filePath);
-        files[filePath] = `${templatesRoot}/components/module/${fileName}`;
-      })
+    console.warn(`Module ${componentsDirPath} exists`);
+    return;
   }
 
-
- // 在api中调用模块文件并进行后期处理
+  // 在api中调用模块文件并进行后期处理
 
   api.render(files);
 
   api.postProcessFiles(files => {
     // 编辑根模块，添加模块 Edit store's root module
-    const storeRoot = files[storeRootPath];
+    const storeRoot = files[storeRootIndexPath];
 
     if (storeRoot) {
       const lines = storeRoot.split(/\r?\n/g).reverse();
@@ -108,12 +119,12 @@ module.exports = (api, options, rootOptions) => {
       // 添加模块行Add module line
       lines.reverse();
       const modulesStartIndex = lines.findIndex(line =>
-        line.match(/modules: *{/)
+        line.match(/modules: *{/),
       );
       if (modulesStartIndex !== -1) {
         const spaces = lines[modulesStartIndex].indexOf("modules");
         const modulesEndIndex = lines.findIndex(
-          (line, index) => index >= modulesStartIndex && line.match(/}/)
+          (line, index) => index >= modulesStartIndex && line.match(/}/),
         );
         if (modulesEndIndex !== -1) {
           if (modulesEndIndex === modulesStartIndex) {
@@ -121,11 +132,11 @@ module.exports = (api, options, rootOptions) => {
             const start = lines[modulesStartIndex].substr(0, closingBraceIndex);
             const end = lines[modulesStartIndex].substr(closingBraceIndex);
             lines[modulesEndIndex] = `${start}\n${Array(spaces + 3).join(
-              " "
+              " ",
             )}${moduleName}\n${Array(spaces + 1).join(" ")}${end}`;
           } else {
             lines[modulesEndIndex] = `${Array(spaces + 3).join(
-              " "
+              " ",
             )}${moduleName}\n${lines[modulesEndIndex]}`;
             if (modulesEndIndex - modulesStartIndex > 1) {
               lines[modulesEndIndex - 1] += ",";
@@ -134,7 +145,7 @@ module.exports = (api, options, rootOptions) => {
         }
       }
 
-      files[storeRootPath] = lines.join("\n");
+      files[storeRootIndexPath] = lines.join("\n");
     }
   });
 };
