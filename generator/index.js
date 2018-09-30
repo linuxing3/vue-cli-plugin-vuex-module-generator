@@ -52,30 +52,30 @@ module.exports = (api, options, rootOptions) => {
   // 如果模块已存在，直接退出
   // @/store/modules/activity.ts
   const moduleDirPath = path.join(storeRootDir, "modules");
-  const moduleDirIndexPath = path.join(moduleDirPath, moduleName);
+  const moduleDirIndexPath = path.join(moduleDirPath, `${moduleName}.ts`);
   console.log("moduleDirIndexPath is:" + moduleDirIndexPath);
   if (!fs.existsSync(moduleDirIndexPath)) {
     // @/store/modules/activity.ts
     files[
       moduleDirIndexPath
-    ] = `${templatesRoot}/store/modules/${moduleName}.ts`;
+    ] = `${templatesRoot}/store/modules/module.ts`;
   }
 
   // 存储器模块的模板文件 Modules templates
   // @store/modules/Base/index.ts ...
-  console.warn(`Checking Module Dir Path ${moduleDirPath}/Base ...`);
+  const moduleBaseDir = path.join(moduleDirPath, "Base");
+  console.warn(`Checking Module Dir Path ...`);
   console.log('--------------------------------------------------------')
-  if (!fs.existsSync(path.join(moduleDirPath, "Base"))) {
+  if (!fs.existsSync(moduleBaseDir)) {
     ["index", "actions", "mutations", "getters"].forEach(template => {
       let fileName = `${template}.ts`;
-      let filePath = path.join(moduleDirPath, "Base", fileName);
+      let filePath = path.join(moduleBaseDir, fileName);
       console.log("module files generated in " + filePath);
       // @/store/modules/Base/index
       files[filePath] = `${templatesRoot}/store/modules/Base/${fileName}`;
     });
   } else {
-    console.warn(`Module ${moduleDirPath}/Base exists`);
-    return;
+    console.warn(`Module ${moduleBaseDir} exists`);
   }
 
   // Components
@@ -94,7 +94,6 @@ module.exports = (api, options, rootOptions) => {
     });
   } else {
     console.warn(`Module ${componentsDirPath} exists`);
-    return;
   }
 
   // 在api中调用模块文件并进行后期处理
