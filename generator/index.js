@@ -13,54 +13,80 @@ module.exports = (api, options, rootOptions) => {
     }
   });
 
+  // 所有文件
+  const files = {};
   // 拷贝模板
-  const { moduleName, storeRootDir } = options;
+  const { moduleName, storeRootDir, routerRootDir, componentsRootDir } = options;
   const templatesRoot = "./templates";
 
-  const moduleDirPath = path.join(storeRootDir, moduleName);
-  const storeRootPath = path.join(storeRootDir, "index.js");
+  // 根目录 Store root directory
+  // @/store/index.ts
+  const storeRootIndexPath = path.join(storeRootDir, "index.ts");
+  if (!fs.existsSync(storeRootIndexPath)) {
+    files[storeRootIndexPath] = `${templatesRoot}/store/index.ts`;
+  }
 
-  // 如果模块已存在，直接退出Abort if module already exists
-  if (fs.existsSync(moduleDirPath)) {
-    console.warn(`Module ${moduleName} exists`);
+ // store model
+  const storeModelPath = path.join(storeRootDir, "Model/BaseModel.ts");
+  if (!fs.existsSync(storeModelPath)) {
+    files[storeModelPath] = `${templatesRoot}/store/Model/BaseModel.ts`;
+  }
+
+ // store api
+  const storeApiPath = path.join(storeRootDir, "api/NedbSDK.ts");
+  if (!fs.existsSync(storeApiPath)) {
+    files[storeApiPath] = `${templatesRoot}/store/api/NedbSDK.ts`;
+  }
+
+  // Store module
+  // 如果模块已存在，直接退出
+  // @/store/modules/activity.ts
+  const moduleDirPath = path.join(storeRootDir, "modules");
+  const moduleDirIndexPath = `${moduleDirPath}/${moduleName}.ts`;
+  if (!fs.existsSync(moduleDirPath)) {
+    // @/store/modules/activity.ts
+    files[moduleDirIndexPath] = `${templatesRoot}/store/modules/${moduleName}.ts`;
+  } else {
+    console.warn(`Module ${moduleDirIndexPath} exists`);
+    return;
+  }
+  // 存储器模块的模板文件 Modules templates
+  // @store/modules/Base/index.ts ...
+  if (!fs.existsSync(moduleDirPath, "Base")) {
+    ["index", "actions", "mutations", "getters"]
+      .forEach(template => {
+        let fileName = `${template}.ts`;
+        let filePath = path.join(moduleDirPath, "Base", fileName);
+        console.log(filePath);
+        // @/store/modules/Base/index
+        files[filePath] = `${templatesRoot}/store/modules/Base/${fileName}`;
+      })
+  } else {
+    console.warn(`Module ${moduleDirPath}/Base exists`);
     return;
   }
 
-  // 所有文件
-  const files = {};
 
-  // 存储器根目录 Store root directory
-  if (!fs.existsSync(storeRootPath)) {
-    files[storeRootPath] = `${templatesRoot}/index.js`;
+// Components
+  // 如果组件已存在，直接退出
+  // @/components/activity
+  const componentsDirPath = path.join(componentsRootDir, moduleName);
+  if (fs.existsSync(componentsDirPath)) {
+    return;
+  } else {
+    ["Table", "Info" ]
+      .forEach(template => {
+        // Table.ts
+        let fileName = `${template}.ts`;
+        // @/components/activity/Table.ts
+        let filePath = path.join(componentsDirPath, fileName);
+        console.log(filePath);
+        files[filePath] = `${templatesRoot}/components/module/${fileName}`;
+      })
   }
 
-  // 存储器模块的模板文件 Modules templates
-  ["index", "actions", "mutations", "getters"]
-    .forEach(template => {
-      const fileName = `${template}.js`;
-      const filePath = path.join(moduleDirPath, fileName);
-      files[filePath] = `${templatesRoot}/module/${fileName}`;
-    })
 
-    [
-      // 帮助函数文件 Store helper templates
-      ("utils", "types")
-    ].forEach(template => {
-      const fileName = `${template}.js`;
-      const filePath = path.join(storeRootPath, fileName);
-      files[filePath] = `${templatesRoot}/${fileName}`;
-    })
-
-    [
-      // api文件 Api templates
-      ("index", "nedb")
-    ].forEach(template => {
-      const fileName = `${template}.js`;
-      const filePath = path.join(moduleDirPath, fileName);
-      files[filePath] = `${templatesRoot}/api/${fileName}`;
-    });
-
-  // 在api中调用模块文件并进行后期处理
+ // 在api中调用模块文件并进行后期处理
 
   api.render(files);
 

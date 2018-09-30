@@ -1,17 +1,4 @@
 /**
- * vuex pathified types
- */
-export const SET_ITEMS = "SET_ITEMS";
-export const SET_CURRENTITEMS = "SET_CURRENTITEM";
-export const SET_FILTER = "SET_FILTER";
-export const SET_NAME = "SET_NAME";
-
-export const setName = "setName";
-export const setItems = "setItems";
-export const setCurrentItem = "setCurrentItem";
-export const setFilter = "setFilter";
-
-/**
  * All mutation notations
  */
 export const mCreate = "mutationCreate";
@@ -48,10 +35,4 @@ export const aCheckCurrentCollection = "actionCheckCurrenCollection";
  * All Namespace notations
  */
 export const nsDatabase = "database";
-export const nsUser = "user";
-export const nsDocument = "document";
-export const nsWriter = "writer";
-export const nsTrello = "trello";
-export const nsBookmark = "bookmark";
-export const nsAccount = "account";
-export const nsNote = "note";
+export const nsActivity = "activity";
