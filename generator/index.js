@@ -246,6 +246,20 @@ module.exports = (api, options, rootOptions) => {
       /activtiy/m,
       unCapitalizeFirstLetter(moduleName)
     );
+
+    // 更改路由的路径文件
+    let routerPath;
+    routerPath = fs.readFileSync(api.resolve(`./src/router/path.ts`));
+
+    routerPath = routerPath.replace(
+      /activtiy/m,
+      unCapitalizeFirstLetter(moduleName)
+    );
+
+    routerPath = routerPath.replace(
+      /Activtiy/m,
+      capitalizeFirstLetter(moduleName)
+    );
   });
 };
 
