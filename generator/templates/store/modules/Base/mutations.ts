@@ -1,44 +1,47 @@
-import types from "@/store/types"
-export default {
+import * as types from "@/store/types";
+
+const mutations = {
   // Add a Item with push
-  [types.mCreate]: (state, payload) => {
+  [types.mCreate]: (state: any, payload: any) => {
     state.items.push(payload);
   },
 
   // Delete
-  [types.mDelete]: (state, payload) => {
+  [types.mDelete]: (state: any, payload: any) => {
     state.items = state.items.filter((item: any) => item._id !== payload._id);
   },
 
   // Update
-  [types.mUpdate]: (state, payload) => {
+  [types.mUpdate]: (state: any, payload: any) => {
     let item = state.items.filter((item: any) => item._id === payload._id);
     item = payload;
   },
 
   // Read
-  [types.mRead]: (state, payload) => {
+  [types.mRead]: (state: any, payload: any) => {
     state.items = payload;
   },
 
   /**
    * Getting value of a dom input and set it
    */
-  [types.mSetValue]: (state, payload) => {
+  [types.mSetValue]: (state: any, payload: any) => {
     state.currentItem[payload.target.name] = payload.target.value;
   },
 
   /**
    * Set the filter of item list
    */
-  [types.mSetFilter]: (state, payload) => {
-    state.filterKey = payload.target.value;
+  [types.mSetFilter]: (state: any, payload: any) => {
+    state.filter.search = payload.target.value;
   },
 
   /**
    * Set current currentItem for edit
    */
-  [types.mSetCurrent]: (state, payload) => {
+  [types.mSetCurrent]: (state: any, payload: any) => {
     state.currentItem = payload;
   },
-}
+};
+
+export default mutations;
