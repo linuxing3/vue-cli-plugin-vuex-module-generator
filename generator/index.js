@@ -218,48 +218,33 @@ module.exports = (api, options, rootOptions) => {
 
   // 安装插件后，对已生成模板文件进行处理
   api.onCreateComplete(() => {
-    // Modify components files and contents
-    let componentTable, componentInfo;
-    componentTable = fs.readFileSync(
-      api.resolve(`./src/components/${moduleName}/${moduleName}Table.ts`)
-    );
-    componentInfo = fs.readFileSync(
-      api.resolve(`./src/components/${moduleName}/${moduleName}Info.ts`)
-    );
-    // 更改组件中的大写开头模块引用
-    componentTable = componentTable.replace(
-      /Activtiy/m,
-      capitalizeFirstLetter(moduleName)
-    );
+    filePaths = [
+      `./src/components/${moduleName}/${moduleName}Table.ts`,
+      `./src/components/${moduleName}/${moduleName}Info.ts`,
+      `./src/store/modules/${moduleName}.ts`,
+      `./src/router/path.ts`
+    ];
 
-    componentInfo = componentInfo.replace(
-      /Activtiy/m,
-      capitalizeFirstLetter(moduleName)
-    );
-
-    // 更改组件中的小写开头模块引用
-    componentTable = componentTable.replace(
-      /activtiy/m,
-      unCapitalizeFirstLetter(moduleName)
-    );
-    componentInfo = componentInfo.replace(
-      /activtiy/m,
-      unCapitalizeFirstLetter(moduleName)
-    );
-
-    // 更改路由的路径文件
-    let routerPath;
-    routerPath = fs.readFileSync(api.resolve(`./src/router/path.ts`));
-
-    routerPath = routerPath.replace(
-      /activtiy/m,
-      unCapitalizeFirstLetter(moduleName)
-    );
-
-    routerPath = routerPath.replace(
-      /Activtiy/m,
-      capitalizeFirstLetter(moduleName)
-    );
+    filePaths.forEach(filePath => {
+      console.log("更新[" + filePath + "]文件中的模块名称");
+      // 读取文件内容
+      fileContent = fs.readFileSync(api.resolve(filePath), {
+        encoding: "utf8"
+      });
+      // 动态替换模块名称
+      fileContent = fileContent.replace(
+        /Activtiy/m,
+        capitalizeFirstLetter(moduleName)
+      );
+      fileContent = fileContent.replace(
+        /activtiy/m,
+        unCapitalizeFirstLetter(moduleName)
+      );
+      // 重新写入到对应文件中
+      fs.writeFileSync(api.resolve(filePath), fileContent, {
+        encoding: "utf8"
+      });
+    });
   });
 };
 
