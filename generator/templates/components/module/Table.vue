@@ -87,9 +87,6 @@ import * as types from "@/store/types";
 
 import ActivityInfo from "@/components/Activity/ActivityInfo.vue";
 
-import DatabaseSelector from "@/components/Database/DatabaseSelector.vue";
-import DocumentSelector from "@/components/Database/DocumentSelector.vue";
-
 import { defaultActivity } from "@/store/Model/BaseModel";
 
 import { log, getFilesByExtentionInDir, GenerateCSV } from "@/util";
@@ -98,15 +95,15 @@ import { remote, shell } from "electron";
 import path from "path";
 
 @Component({
-  components: { ActivityInfo,  DatabaseSelector, DocumentSelector },
+  components: { ActivityInfo },
   computed: {
     ...get("activity/*"),
     search: sync("activity/filter@search"),
-    docPath: sync("activity/export@docPath"),
+    docPath: sync("activity/export@docPath")
   },
   methods: {
-    ...call("activity/*"),
-  },
+    ...call("activity/*")
+  }
 })
 export default class ActivityTable extends Vue {
   // Props
@@ -131,18 +128,23 @@ export default class ActivityTable extends Vue {
 
   created() {
     // Listen for event
-    this.$on("INFO_CLOSE", ()=> {
+    this.$on("INFO_CLOSE", () => {
       this.dialog = false;
-    })
+    });
     window.activityApp = this;
   }
 
   mounted() {
     // Initialize the template path
-    this.userTemplatePath = path.join(remote.app.getPath("home"), "/Documents/template");
+    this.userTemplatePath = path.join(
+      remote.app.getPath("home"),
+      "/Documents/template"
+    );
     log.suc("Template Directory is: " + this.userTemplatePath);
-    this.templateDocs = getFilesByExtentionInDir(this.userTemplatePath, "doc");
-
+    this.templateDocs = this.getFilesByExtentionInDir(
+      this.userTemplatePath,
+      "doc"
+    );
   }
 
   editItem(item) {
@@ -169,11 +171,27 @@ export default class ActivityTable extends Vue {
       let filePath = path.join(this.userTemplatePath, `${this.docPath}.doc`);
       log.info(filePath);
       // Export CSV
-      GenerateCSV(this.itemFiltered, path.join(this.userTemplatePath, "/db.csv"));
+      GenerateCSV(
+        this.itemFiltered,
+        path.join(this.userTemplatePath, "/db.csv")
+      );
       // open template file
       shell.showItemInFolder(filePath);
       shell.openItem(filePath);
     }
+  }
+  getFilesByExtentionInDir(path, ext) {
+    const Docs = [];
+    fs.readdir(path, (_, files) => {
+      files.forEach(file => {
+        log.info(file);
+        if (file.substring(file.length - ext.length) !== ext) return;
+        // Regex Replacement:   ./    .doc     .json
+        let keyName = file.replace(/(\.\/|\.doc|\.json|\.js|\.ts)/g, "");
+        Docs.push(keyName);
+      });
+    });
+    return Docs;
   }
 }
 </script>

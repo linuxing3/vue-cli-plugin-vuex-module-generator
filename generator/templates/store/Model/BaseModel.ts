@@ -4,10 +4,10 @@
  */
 
 export const collections = [
-  "activity", // 对外活动，包括各种会议会见
+  "activity" // 对外活动，包括各种会议会见
 ];
 
-export const defaultActivity: any = {
+export const defaultCOMPONENTNAME: any = {
   地点: "Embajada china",
   日期: "2018-1-1",
   内容: "会见",
@@ -20,5 +20,5 @@ export const defaultActivity: any = {
   批示人: "XXX",
   批示日期: "请办",
   批示内容: "请办",
-  优先级: "高",
+  优先级: "高"
 };

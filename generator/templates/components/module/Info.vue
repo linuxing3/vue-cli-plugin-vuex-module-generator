@@ -25,12 +25,12 @@ import { get, sync, call } from "vuex-pathify";
 
 @Component({
   computed: {
-    ...sync("activity/*"),
+    ...sync("activity/*")
   },
   methods: {
     ...call("activity/*"),
-    ...call("database/"),
-  },
+    ...call("database/")
+  }
 })
 export default class ActivityInfo extends Vue {
   // Props
@@ -48,7 +48,7 @@ export default class ActivityInfo extends Vue {
       this.actionCreate(this.currentItem);
     }
     this.actionRead();
-    window.activityApp.$emit("INFO_CLOSE")
+    window.activityApp.$emit("INFO_CLOSE");
   }
 }
 </script>
