@@ -41,7 +41,12 @@ module.exports = (api, options, rootOptions) => {
 
   // 拷贝模板
   const files = {};
-  const { moduleName, storeRootDir, routerRootDir, componentRootDir } = options;
+
+  // 如果vue.config.js中有预设置，使用预设置，否则使用prompts输入设置
+  const { moduleName, storeRootDir, routerRootDir, componentRootDir } =
+    options.pluginOptions && options.pluginOptions.vuexModuleGenerator
+      ? options.pluginOptions.vuexModuleGenerator
+      : options;
   const templatesRoot = "./templates";
 
   // 根目录 Store root directory
@@ -52,10 +57,11 @@ module.exports = (api, options, rootOptions) => {
   if (!fs.existsSync(storeRootIndexPath)) {
     files[storeRootIndexPath] = `${templatesRoot}/store/index.ts`;
   }
+
   // Store types
   // @/store/types.ts
   const storeRootTypesPath = path.join(storeRootDir, "types.ts");
-  console.log("storeRootIndexPath is: " + storeRootTypesPath);
+  console.log("storeRootTypesPath is: " + storeRootTypesPath);
   console.log("--------------------------------------------------------");
   if (!fs.existsSync(storeRootTypesPath)) {
     files[storeRootTypesPath] = `${templatesRoot}/store/types.ts`;
@@ -81,11 +87,21 @@ module.exports = (api, options, rootOptions) => {
   // Store module
   // moduleDirIndexPath from @/store/modules/module.ts
   const moduleDirPath = path.join(storeRootDir, "modules");
-  const moduleDirIndexPath = path.join(moduleDirPath, `${moduleName}.ts`);
+
+  const moduleDirModulePath = path.join(moduleDirPath, `${moduleName}.ts`);
+  console.log("moduleDirModulePath is:" + moduleDirModulePath);
+  if (!fs.existsSync(moduleDirModulePath)) {
+    // to @/store/modules/activity.ts
+    files[moduleDirModulePath] = `${templatesRoot}/store/modules/module.ts`;
+  } else {
+    console.warn("Store SubModule file exists");
+  }
+
+  const moduleDirIndexPath = path.join(moduleDirPath, `index.ts`);
   console.log("moduleDirIndexPath is:" + moduleDirIndexPath);
   if (!fs.existsSync(moduleDirIndexPath)) {
-    // @/store/modules/activity.ts
-    files[moduleDirIndexPath] = `${templatesRoot}/store/modules/module.ts`;
+    // to @/store/modules/index.ts with require.context for auto import modules
+    files[moduleDirIndexPath] = `${templatesRoot}/store/modules/index.ts`;
   } else {
     console.warn("Store Module Index file exists");
   }
@@ -102,7 +118,6 @@ module.exports = (api, options, rootOptions) => {
       let fileName = `${template}.ts`;
       let filePath = path.join(moduleBaseDir, fileName);
       console.log("module files generated in " + filePath);
-      // @/store/modules/Base/index
       files[filePath] = `${templatesRoot}/store/modules/Base/${fileName}`;
     });
   } else {
@@ -119,7 +134,6 @@ module.exports = (api, options, rootOptions) => {
       let fileName = `${template}.ts`;
       let filePath = path.join(pluginBaseDir, fileName);
       console.log("Plugin files generated in " + filePath);
-      // @/store/modules/Base/index
       files[filePath] = `${templatesRoot}/store/plugin/${fileName}`;
     });
   } else {
@@ -136,7 +150,7 @@ module.exports = (api, options, rootOptions) => {
       let fileName = `${template}.ts`;
       let filePath = path.join(routerBaseDir, fileName);
       console.log("Plugin files generated in " + filePath);
-      // @/store/modules/Base/index
+      // to @/store/rotuer/*
       files[filePath] = `${templatesRoot}/router/${fileName}`;
     });
   } else {
@@ -145,28 +159,29 @@ module.exports = (api, options, rootOptions) => {
 
   // Components
   // 如果组件已存在，直接退出
-  // @/components/activity
-  const componentsDirPath =
+  // from @/components/activity/Table.vue
+  const componentsDir =
     path.join(componentRootDir, moduleName) || componentRootDir;
-  console.warn(`Checking Components Dir Path ${componentsDirPath} ...`);
-  if (!fs.existsSync(componentsDirPath)) {
+  console.warn(`Checking Components Dir Path ${componentsDir} ...`);
+  if (!fs.existsSync(componentsDir)) {
     ["Table", "Info"].forEach(template => {
-      // Table.ts
       let fileName = `${template}.vue`;
-      // @/components/activity/Table.ts
-      let filePath = path.join(componentsDirPath, `${moduleName}${fileName}`);
+      // @/components/activity/activityTable.vue
+      let filePath = path.join(componentsDir, `${moduleName}${fileName}`);
       console.log("Components files generated in " + filePath);
       files[filePath] = `${templatesRoot}/components/module/${fileName}`;
     });
   } else {
-    console.warn(`Components Module ${componentsDirPath} exists`);
+    console.warn(`Components Module ${componentsDir} exists`);
   }
 
-  // 在api中调用模块文件并进行后期处理
-
+  // 拷贝模块文件到项目文件中
+  console.log("文件准备完毕，拷贝到相应目录！");
+  console.log(files);
   api.render(files);
+  console.log("文件拷贝完毕，进行后续处理！");
 
-  // 安装插件前，对模板文件进行后期处理
+  console.log("安装插件前，对模板文件进行后期处理");
 
   api.postProcessFiles(files => {
     // 编辑根模块，添加模块 Edit store's root module
@@ -216,21 +231,22 @@ module.exports = (api, options, rootOptions) => {
     }
   });
 
-  // 安装插件后，对已生成模板文件进行处理
+  console.log(
+    "安装插件后，对已生成模板文件进行处理，替换为示例名称为相应模块的名称！"
+  );
+
   api.onCreateComplete(() => {
     filePaths = [
-      `./src/components/${moduleName}/${moduleName}Table.ts`,
-      `./src/components/${moduleName}/${moduleName}Info.ts`,
       `./src/store/modules/${moduleName}.ts`,
-      `./src/router/path.ts`
+      `./src/router/path.ts`,
+      `./src/components/${moduleName}/${moduleName}Table.ts`,
+      `./src/components/${moduleName}/${moduleName}Info.ts`
     ];
 
     filePaths.forEach(filePath => {
       console.log("更新[" + filePath + "]文件中的模块名称");
       // 读取文件内容
-      fileContent = fs.readFileSync(api.resolve(filePath), {
-        encoding: "utf8"
-      });
+      fileContent = fs.readFileSync(api.resolve(filePath), "utf8");
       // 动态替换模块名称
       fileContent = fileContent.replace(
         /Activtiy/m,
@@ -238,21 +254,19 @@ module.exports = (api, options, rootOptions) => {
       );
       fileContent = fileContent.replace(
         /activtiy/m,
-        unCapitalizeFirstLetter(moduleName)
+        uncapitalizeFirstLetter(moduleName)
       );
       // 重新写入到对应文件中
-      fs.writeFileSync(api.resolve(filePath), fileContent, {
-        encoding: "utf8"
-      });
+      fs.writeFileSync(api.resolve(filePath), fileContent, "utf8");
     });
   });
 };
 
 // Helper functions
-function capitalizeFirstLetter(str) {
+export function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-function unCapitalizeFirstLetter(str) {
+export function uncapitalizeFirstLetter(str) {
   return str.charAt(0).toLowerCase() + str.slice(1).toLowerCase();
 }

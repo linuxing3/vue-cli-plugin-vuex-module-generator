@@ -28,16 +28,14 @@
           class="elevation-0"
         >
           <template slot="items" slot-scope="props">
-            <td>{{ props.item['联系人'] }}</td>
             <td>
               <v-avatar size="36px">
-                <v-img :src="require('@/assets/mf-avatar.svg')">
+                <v-img :src="require('')">
                 </v-img>
               </v-avatar>
             </td>
-            <td class="text-xs-left">{{ props.item['地点'] }}</td>
-            <td class="text-xs-left">{{ props.item['日期'] }}</td>
-            <td class="text-xs-left">{{ props.item['活动形式']}} </td>
+            <td>{{ props.item['name'] }}</td>
+            <td class="text-xs-left">{{ props.item['description'] }}</td>
             <td class="justify-center layout px-0">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
@@ -63,7 +61,6 @@
               <!-- User Input Form -->
               <v-container grid-list-md>
                   <ActivityInfo :editing="editing" />
-                  <v-btn @click="dialog = false">关闭</v-btn>
               </v-container>
               <!-- End Form -->
             </v-card-text>
@@ -87,7 +84,7 @@ import * as types from "@/store/types";
 
 import ActivityInfo from "@/components/Activity/ActivityInfo.vue";
 
-import { defaultActivity } from "@/store/Model/BaseModel";
+import { defaultItem } from "@/store/Model/BaseModel";
 
 import { log, getFilesByExtentionInDir, GenerateCSV } from "@/util";
 
@@ -109,16 +106,9 @@ export default class ActivityTable extends Vue {
   // Props
   dialog = false;
   editing = false;
-  formTitle = "项目任务信息";
+  formTitle = "title";
 
-  userTemplatePath = "";
-  userDataPath = "";
-
-  outputJsonFile = "";
-  templateDocName = "";
-  templateDocs = [];
-
-  avatarPath = "@/assets/mf-avatar.svg";
+  avatarPath = "";
 
   constructor() {
     super();
@@ -134,19 +124,6 @@ export default class ActivityTable extends Vue {
     window.activityApp = this;
   }
 
-  mounted() {
-    // Initialize the template path
-    this.userTemplatePath = path.join(
-      remote.app.getPath("home"),
-      "/Documents/template"
-    );
-    log.suc("Template Directory is: " + this.userTemplatePath);
-    this.templateDocs = this.getFilesByExtentionInDir(
-      this.userTemplatePath,
-      "doc"
-    );
-  }
-
   editItem(item) {
     this.editing = true;
     this.$store.set("activity/currentItem", item);
@@ -155,43 +132,12 @@ export default class ActivityTable extends Vue {
 
   addItem() {
     this.editing = false;
-    this.$store.set("activity/currentItem", defaultActivity);
+    this.$store.set("activity/currentItem", defaultItem);
     this.dialog = true;
   }
 
   deleteItem(item) {
     this.actionDelete(item);
-  }
-
-  exportItem() {
-    if (this.docPath === "") {
-      alert("请选择使用的word模板");
-      return;
-    } else {
-      let filePath = path.join(this.userTemplatePath, `${this.docPath}.doc`);
-      log.info(filePath);
-      // Export CSV
-      GenerateCSV(
-        this.itemFiltered,
-        path.join(this.userTemplatePath, "/db.csv")
-      );
-      // open template file
-      shell.showItemInFolder(filePath);
-      shell.openItem(filePath);
-    }
-  }
-  getFilesByExtentionInDir(path, ext) {
-    const Docs = [];
-    fs.readdir(path, (_, files) => {
-      files.forEach(file => {
-        log.info(file);
-        if (file.substring(file.length - ext.length) !== ext) return;
-        // Regex Replacement:   ./    .doc     .json
-        let keyName = file.replace(/(\.\/|\.doc|\.json|\.js|\.ts)/g, "");
-        Docs.push(keyName);
-      });
-    });
-    return Docs;
   }
 }
 </script>

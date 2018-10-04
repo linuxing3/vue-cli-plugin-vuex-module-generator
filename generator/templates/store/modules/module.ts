@@ -1,21 +1,21 @@
 import { make } from "vuex-pathify";
-import Base from "@/store/modules/Base";
+import Base from "./Base";
 
-import { defaultActivity } from "@/store/Model/BaseModel";
+import { defaultItem } from "../Model/BaseModel";
 
 const state: any = {
   name: "activity",
   items: [],
-  currentItem: defaultActivity,
+  currentItem: defaultItem,
   filter: {
     search: "",
-    sort: "",
-  },
+    sort: ""
+  }
 };
 
 const mutations: any = {
   ...make.mutations(state),
-  ...Base.mutations,
+  ...Base.mutations
 };
 
 const actions: any = { ...make.actions(state), ...Base.actions };
@@ -27,5 +27,5 @@ export default {
   state,
   mutations,
   actions,
-  getters,
+  getters
 };

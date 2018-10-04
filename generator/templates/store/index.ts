@@ -16,32 +16,30 @@ Vue.use(Vuex);
 import { make } from "vuex-pathify";
 
 // Init Database
-import { dbInit } from "@/store/api/NedbSDK";
+import { dbInit } from "./api/NedbSDK";
 dbInit();
 
 // Modules Activated
-import activity from "./modules/Activity";
+import modules from "./modules";
+
+import Base from "./modules/Base";
 
 // Plugins will handle persistence
 import plugins from "./plugin";
-
-// All modules are based on Base, with same mutation
-// and actions, and with different states
-import Base from "./modules/Base";
 
 const state = {
   title: "xing wenju",
   filterKey: "",
   token: {
     netlifyToken: "",
-    firebaseToken: "",
+    firebaseToken: ""
   },
-  loggedIn: false,
+  loggedIn: false
 };
 
-const mutations: any = { ...make.mutations(state), Base.mutations };
+const mutations: any = { ...make.mutations(state), ...Base.mutations };
 
-const actions: any = {...make.actions(state), Base.actions };
+const actions: any = { ...make.actions(state), ...Base.actions };
 
 /**
  * Awesome store created here!
@@ -51,12 +49,10 @@ const actions: any = {...make.actions(state), Base.actions };
 export default new Vuex.Store({
   state,
   plugins,
-  modules: {
-    activity,
-  },
+  modules,
   getters: {
-    rootTitle: state => state.title,
+    rootTitle: state => state.title
   },
   mutations,
-  actions,
+  actions
 });

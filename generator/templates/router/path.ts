@@ -1,4 +1,4 @@
-export default
+export default [
   {
     path: "/activities",
     meta: { breadcrumb: true },
@@ -6,5 +6,6 @@ export default
     component: () =>
       import(/* webpackChunkName: "routes" */
       /* webpackMode: "lazy" */
-      `@/components/Activity/ActivityTable.vue`),
+      `@/components/Activity/ActivityTable.vue`)
   }
+];

@@ -1,14 +1,14 @@
-module.exports = (api, projectOptions) => {
-  api.chainWebpack(webpackConfig => {
-    // modify webpack config with webpack-chain
-  })
+const { chainWebpack, getExternals } = require("./lib/webpackConfig");
 
-  api.configureWebpack(webpackConfig => {
-    // modify webpack config
-    // or return object to be merged with webpack-merge
-  })
+module.exports = (api, options) => {
+  // 根据vue.config.js中的vuexModuleGenerator设置更新webpack
+  const pluginOptions =
+    options.pluginOptions && options.pluginOptions.vuexModuleGenerator
+      ? options.pluginOptions.vuexModuleGenerator
+      : {};
 
-  api.registerCommand('vuexmodule', args => {
-    // register `vue-cli-service test`
-  })
-}
+  // 应用自定义的webpack配置
+  api.chainWebpack(async config => {
+    chainWebpack(api, pluginOptions, config);
+  });
+};
