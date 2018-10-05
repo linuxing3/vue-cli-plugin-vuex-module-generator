@@ -1,5 +1,7 @@
 /* eslint-disable */
-import { uncapitalizeFirstLetter } from "../../../index";
+function uncapitalizeFirstLetter(str) {
+  return str.charAt(0).toLowerCase() + str.slice(1).toLowerCase();
+}
 
 let files = require["context"](".", false, /\.ts$/);
 let modules = {};

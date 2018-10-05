@@ -1,6 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 
+// Helper functions
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+function uncapitalizeFirstLetter(str) {
+  return str.charAt(0).toLowerCase() + str.slice(1).toLowerCase();
+}
+
 module.exports = (api, options, rootOptions) => {
   // 确认使用typescript
   const usesTS = api.hasPlugin("typescript");
@@ -262,11 +271,3 @@ module.exports = (api, options, rootOptions) => {
   });
 };
 
-// Helper functions
-export function capitalizeFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
-
-export function uncapitalizeFirstLetter(str) {
-  return str.charAt(0).toLowerCase() + str.slice(1).toLowerCase();
-}
