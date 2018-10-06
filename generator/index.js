@@ -155,7 +155,7 @@ module.exports = (api, options, rootOptions) => {
   console.warn(`Checking Plugin Dir Path ...`);
   console.log("--------------------------------------------------------");
   if (!fs.existsSync(routerBaseDir)) {
-    ["index", "path"].forEach(template => {
+    ["index", "path", moduleName].forEach(template => {
       let fileName = `${template}.ts`;
       let filePath = path.join(routerBaseDir, fileName);
       console.log("Plugin files generated in " + filePath);
@@ -204,7 +204,7 @@ module.exports = (api, options, rootOptions) => {
       if (lastImportIndex !== -1) {
         lines[
           lastImportIndex
-        ] += `\nimport ${moduleName} from './${moduleName}'`;
+        ] += `\n//import ${moduleName} from './${moduleName}'`;
       }
 
       // 添加模块行Add module line
@@ -223,11 +223,11 @@ module.exports = (api, options, rootOptions) => {
             const start = lines[modulesStartIndex].substr(0, closingBraceIndex);
             const end = lines[modulesStartIndex].substr(closingBraceIndex);
             lines[modulesEndIndex] = `${start}\n${Array(spaces + 3).join(
-              " "
+              " //"
             )}${moduleName}\n${Array(spaces + 1).join(" ")}${end}`;
           } else {
             lines[modulesEndIndex] = `${Array(spaces + 3).join(
-              " "
+              " //"
             )}${moduleName}\n${lines[modulesEndIndex]}`;
             if (modulesEndIndex - modulesStartIndex > 1) {
               lines[modulesEndIndex - 1] += ",";
@@ -247,6 +247,7 @@ module.exports = (api, options, rootOptions) => {
   api.onCreateComplete(() => {
     filePaths = [
       `${storeRootDir}/modules/${moduleName}.ts`,
+      `${routerRootDir}/${moduleName}.ts`,
       `${componentRootDir}/${moduleName}/${moduleName}Table.vue`,
       `${componentRootDir}/${moduleName}/${moduleName}Info.vue`
     ];
@@ -257,15 +258,15 @@ module.exports = (api, options, rootOptions) => {
       fileContent = fs.readFileSync(api.resolve(filePath), "utf8");
       // 动态替换模块名称
       fileContent = fileContent.replace(
-        /Activtiy.*?/m,
+        /Activity/m,
         capitalizeFirstLetter(moduleName)
       );
       fileContent = fileContent.replace(
-        /activtiy.*?/m,
+        /activity/m,
         uncapitalizeFirstLetter(moduleName)
       );
       // 重新写入到对应文件中
-      fs.writeFileSync(api.resolve(filePath), fileContent, "utf8");
+      fs.writeFileSync(api.resolve(filePath), fileContent);
     });
   });
 };
