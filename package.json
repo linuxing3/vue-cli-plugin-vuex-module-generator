@@ -1,19 +1,13 @@
 {
   "name": "vue-cli-plugin-vuex-nedb-module-generator",
   "description": "Vuex store module generator plugin with base model and extension for vue-cli 3",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/linuxing3/vue-cli-plugin-vuex-nedb-module-generator.git"
   },
-  "dependencies": {
-    "debug": "^3.1.0",
-    "deepmerge": "^2.1.1",
-    "dotenv": "^6.0.0",
-    "flat": "^4.0.0",
-    "vue": "^2.5.16"
-  },
+  "dependencies": {},
   "bugs": {
     "url": "https://github.com/linuxing3/vue-cli-plugin-vuex-nedb-module-generator/issues"
   },
@@ -30,6 +24,5 @@
     "cli",
     "plugin"
   ],
-  "dependencies": {},
   "devDependencies": {}
 }
