@@ -16,7 +16,7 @@ const {
   sortObject,
   capitalizeFirstLetter,
   uncapitalizeFirstLetter,
-} = require("../utils");
+} = require("../util");
 
 module.exports = (api, options, rootOptions) => {
   debug("options", options);
@@ -40,11 +40,9 @@ module.exports = (api, options, rootOptions) => {
     debug("additionalOptions", additionalOptions);
 
     // 确认使用typescript
-    if (lang === "ts") {
+    if (!lang === "ts") {
       console.log("This plugin should be used with typescript");
       console.log("Please install it: vue add typescript ");
-      // api.injectImports(file, `import i18n from './i18n'`)
-      // api.injectRootOptions(file, `i18n,`)
     }
     // 确认使用electron
     const usesELECTRON = api.hasPlugin("electron-builder");
@@ -83,7 +81,7 @@ module.exports = (api, options, rootOptions) => {
       files[storeRootIndexPath] = `${templatesRoot}/store/index.ts`;
     }
 
-    // Store types
+    // 存储器类型定义Store types
     // @/store/types.ts
     const storeRootTypesPath = path.join(storeRootDir, "types.ts");
     debug("storeRootTypesPath is: ", storeRootTypesPath);
@@ -92,7 +90,7 @@ module.exports = (api, options, rootOptions) => {
       files[storeRootTypesPath] = `${templatesRoot}/store/types.ts`;
     }
 
-    // Store model
+    // 存储器数据模型Store model
     // @/store/Model/*
     const storeModelPath = path.join(storeRootDir, "Model/BaseModel.ts");
     console.log("storeModelPath is: " + storeModelPath);
@@ -101,7 +99,7 @@ module.exports = (api, options, rootOptions) => {
       files[storeModelPath] = `${templatesRoot}/store/Model/BaseModel.ts`;
     }
 
-    // Store api
+    // 存储器接口Store api
     // @/store/api/*
     const storeApiPath = path.join(storeRootDir, "api/NedbSDK.ts");
     console.log("storeApiPath is:" + storeApiPath);
@@ -109,7 +107,7 @@ module.exports = (api, options, rootOptions) => {
       files[storeApiPath] = `${templatesRoot}/store/api/NedbSDK.ts`;
     }
 
-    // Store module
+    // 存储器模块Store module
     // moduleDirIndexPath from @/store/modules/module.ts
     const moduleDirPath = path.join(storeRootDir, "modules");
 
@@ -131,7 +129,7 @@ module.exports = (api, options, rootOptions) => {
       console.warn("Store Module Index file exists");
     }
 
-    // 存储器模块的模板文件,包含对NEDB统一的CRUD操作，可被其他模块引用和扩展
+    // 存储器共享根模块的模板文件,包含对NEDB统一的CRUD操作，可被其他模块引用和扩展
     // Modules templates
     // moduleBaseDir from @store/modules/Base/*
     // Each file under the dir will be rendered, as base module to be extented
@@ -188,7 +186,7 @@ module.exports = (api, options, rootOptions) => {
       files[moduleRouterPath] = `${templatesRoot}/router/moduleRoute.ts`;
     }
 
-    // Components
+    // 组件Components
     // 如果组件已存在，直接退出
     // from @/components/activity/Table.vue
     const componentsDir =
