@@ -247,7 +247,6 @@ module.exports = (api, options, rootOptions) => {
   api.onCreateComplete(() => {
     filePaths = [
       `${storeRootDir}/modules/${moduleName}.ts`,
-      `${routerRootDir}/path.ts`,
       `${componentRootDir}/${moduleName}/${moduleName}Table.vue`,
       `${componentRootDir}/${moduleName}/${moduleName}Info.vue`
     ];
@@ -258,11 +257,11 @@ module.exports = (api, options, rootOptions) => {
       fileContent = fs.readFileSync(api.resolve(filePath), "utf8");
       // 动态替换模块名称
       fileContent = fileContent.replace(
-        /Activtiy/m,
+        /Activtiy.*?/m,
         capitalizeFirstLetter(moduleName)
       );
       fileContent = fileContent.replace(
-        /activtiy/m,
+        /activtiy.*?/m,
         uncapitalizeFirstLetter(moduleName)
       );
       // 重新写入到对应文件中
