@@ -246,10 +246,10 @@ module.exports = (api, options, rootOptions) => {
 
   api.onCreateComplete(() => {
     filePaths = [
-      `./src/store/modules/${moduleName}.ts`,
-      `./src/router/path.ts`,
-      `./src/components/${moduleName}/${moduleName}Table.ts`,
-      `./src/components/${moduleName}/${moduleName}Info.ts`
+      `${storeRootDir}/modules/${moduleName}.ts`,
+      `${routerRootDir}/path.ts`,
+      `${componentRootDir}/${moduleName}/${moduleName}Table.vue`,
+      `${componentRootDir}/${moduleName}/${moduleName}Info.vue`
     ];
 
     filePaths.forEach(filePath => {
@@ -270,4 +270,3 @@ module.exports = (api, options, rootOptions) => {
     });
   });
 };
-
