@@ -21,24 +21,23 @@ const {
 module.exports = (api, options, rootOptions) => {
   debug("options", options);
   debug("rootOptions", rootOptions);
+  const templatesRoot = "./templates";
+  // 如果vue.config.js中有预设置，使用预设置，否则使用prompts输入设置
+  const { moduleName, storeRootDir, routerRootDir, componentRootDir } =
+    options.pluginOptions && options.pluginOptions.vuexModuleGenerator
+      ? options.pluginOptions.vuexModuleGenerator
+      : options;
+  const lang = api.hasPlugin("typescript") ? "ts" : "js";
+  const classComponent =
+    checkInstalled("./node_modules/vue-class-component/package.json") &&
+    checkInstalled("./node_modules/vue-property-decorator/package.json");
+  const additionalOptions = {
+    ...options,
+    ...{ lang, moduleName },
+  };
+  debug("additionalOptions", additionalOptions);
 
   try {
-    const templatesRoot = "./templates";
-    // 如果vue.config.js中有预设置，使用预设置，否则使用prompts输入设置
-    const { moduleName, storeRootDir, routerRootDir, componentRootDir } =
-      options.pluginOptions && options.pluginOptions.vuexModuleGenerator
-        ? options.pluginOptions.vuexModuleGenerator
-        : options;
-    const lang = api.hasPlugin("typescript") ? "ts" : "js";
-    const classComponent =
-      checkInstalled("./node_modules/vue-class-component/package.json") &&
-      checkInstalled("./node_modules/vue-property-decorator/package.json");
-    const additionalOptions = {
-      ...options,
-      ...{ lang, moduleName },
-    };
-    debug("additionalOptions", additionalOptions);
-
     // 确认使用typescript
     if (!lang === "ts") {
       console.log("This plugin should be used with typescript");
@@ -241,7 +240,7 @@ module.exports = (api, options, rootOptions) => {
       console.log("更新[" + filePath + "]文件中的模块名称");
       // 读取文件内容
       let realPath = api.resolve(filePath);
-      if (!exists(path)) {
+      if (!exists(realPath)) {
         api.exitLog("File not exites!", "error");
       } else {
         fileContent = fs.readFileSync(realPath, "utf8");
