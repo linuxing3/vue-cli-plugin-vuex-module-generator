@@ -154,8 +154,9 @@ module.exports = (api, options, rootOptions) => {
   const routerBaseDir = routerRootDir || path.join(storeRootDir, "router");
   console.warn(`Checking Plugin Dir Path ...`);
   console.log("--------------------------------------------------------");
+  // index is router entry and path is routes array
   if (!fs.existsSync(routerBaseDir)) {
-    ["index", "path", moduleName].forEach(template => {
+    ["index", "path" ].forEach(template => {
       let fileName = `${template}.ts`;
       let filePath = path.join(routerBaseDir, fileName);
       console.log("Plugin files generated in " + filePath);
@@ -163,7 +164,10 @@ module.exports = (api, options, rootOptions) => {
       files[filePath] = `${templatesRoot}/router/${fileName}`;
     });
   } else {
-    console.warn(`Router ${routerBaseDir} exists`);
+    console.warn(`Router ${routerBaseDir} exists, only add new module route!`);
+    // module route to be added
+    const moduleRouterPath = path.join(routerBaseDir, `${moduleName}.ts`)
+    files[moduleRouterPath] = `${templatesRoot}/router/moduleRoute.ts`
   }
 
   // Components
@@ -258,11 +262,11 @@ module.exports = (api, options, rootOptions) => {
       fileContent = fs.readFileSync(api.resolve(filePath), "utf8");
       // 动态替换模块名称
       fileContent = fileContent.replace(
-        /Activity/m,
+        /Activity/g,
         capitalizeFirstLetter(moduleName)
       );
       fileContent = fileContent.replace(
-        /activity/m,
+        /activity/g,
         uncapitalizeFirstLetter(moduleName)
       );
       // 重新写入到对应文件中
