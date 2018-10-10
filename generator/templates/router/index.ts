@@ -7,7 +7,7 @@ import path from "./path";
 Vue.use(Router);
 
 const router = new Router({
-  routes: path
+  routes: path,
 });
 
 // router gards

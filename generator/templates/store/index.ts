@@ -1,14 +1,3 @@
-/**
- * CopyRight: Xing wenju
- * Author: Xing wenju
- * Email: linuxing3@qq.com
- * Git: https://github.org/linuxing3
- * License: MIT
- * Project: official-manager
- * Language: javascript/vue
- * Description:  Description is here
- *
- */
 import Vue from "vue";
 import Vuex from "vuex";
 
@@ -16,7 +5,7 @@ Vue.use(Vuex);
 import { make } from "vuex-pathify";
 
 // Init Database
-import { dbInit } from "./api/NedbSDK";
+import { dbInit } from "@/api/nedb";
 dbInit();
 
 // Modules Activated
@@ -32,9 +21,9 @@ const state = {
   filterKey: "",
   token: {
     netlifyToken: "",
-    firebaseToken: ""
+    firebaseToken: "",
   },
-  loggedIn: false
+  loggedIn: false,
 };
 
 const mutations: any = { ...make.mutations(state), ...Base.mutations };
@@ -51,8 +40,8 @@ export default new Vuex.Store({
   plugins,
   modules,
   getters: {
-    rootTitle: state => state.title
+    rootTitle: state => state.title,
   },
   mutations,
-  actions
+  actions,
 });

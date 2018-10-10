@@ -19,7 +19,7 @@ import * as _ from "lodash";
 
 // import datastore from "nedb";
 import datastore from "nedb-promise";
-import { collections } from "@/store/Model/BaseModel";
+import { collections } from "@/api/models/BaseModel";
 import { log } from "@/util";
 
 import { remote } from "electron";

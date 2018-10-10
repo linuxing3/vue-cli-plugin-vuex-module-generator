@@ -1,6 +1,6 @@
 import { PersistencePlugin } from "./PersistentPlugin";
 
-import { collections } from "@/store/Model/BaseModel";
+import { collections } from "@/api/models/BaseModel";
 
 import pathify from "./pathify";
 pathify.debug();

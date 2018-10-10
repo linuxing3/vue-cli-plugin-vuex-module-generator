@@ -9,7 +9,7 @@ import * as types from "@/store/types";
 
 import { ActionContext } from "vuex";
 
-import { dbOpen } from "@/store/api/NedbSDK";
+import { dbOpen } from "@/api/nedb";
 
 const actions = {
   // Create New Item
